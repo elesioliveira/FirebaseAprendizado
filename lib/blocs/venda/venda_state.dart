@@ -15,8 +15,8 @@ class VendaCarregada extends EstadoDaVenda {
 }
 
 class ErrorEstadoVenda extends EstadoDaVenda {
-  final String menssagem;
+  final String mensagem;
   ErrorEstadoVenda({
-    required this.menssagem,
+    required this.mensagem,
   });
 }

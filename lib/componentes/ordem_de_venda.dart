@@ -2,20 +2,28 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/componentes/show_dialog_delete_usuario.dart';
+import 'package:teste_firebase/pages/atualizar_venda.dart';
+
+import '../model/model_vendas.dart';
 
 class OrdemDeVenda extends StatefulWidget {
-  const OrdemDeVenda(
-      {super.key,
-      required this.idExclusao,
-      required this.cliente,
-      required this.produto,
-      required this.valor,
-      required this.primeiraLetraNome});
+  const OrdemDeVenda({
+    super.key,
+    required this.idExclusao,
+    required this.cliente,
+    required this.produto,
+    required this.valor,
+    required this.primeiraLetraNome,
+    required this.vendas, // Adicionando a lista de vendas
+    required this.index, // Adicionando o índice da venda
+  });
   final String idExclusao;
   final String cliente;
   final String produto;
   final String valor;
   final String primeiraLetraNome;
+  final List<Venda> vendas; // Lista de vendas
+  final int index; // Índice da venda clicada
 
   @override
   State<OrdemDeVenda> createState() => _OrdemDeVendaState();
@@ -127,7 +135,16 @@ class _OrdemDeVendaState extends State<OrdemDeVenda> {
                     // width: MediaQuery.sizeOf(context).width / 10,
                     child: IconButton(
                       color: Colors.grey,
-                      onPressed: () {},
+                      onPressed: () {
+                        // Navegar para a segunda página
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AtualizarVendaPage(
+                                venda: widget.vendas[widget.index]),
+                          ),
+                        );
+                      },
                       icon: const Icon(Icons.edit),
                     ),
                   ),

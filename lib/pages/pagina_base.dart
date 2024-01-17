@@ -1,13 +1,11 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teste_firebase/blocs/venda_cubit.dart';
-import 'package:teste_firebase/blocs/venda_state.dart';
+import 'package:teste_firebase/blocs/venda/venda_cubit.dart';
+import 'package:teste_firebase/blocs/venda/venda_state.dart';
 
 import 'package:teste_firebase/componentes/ordem_de_venda.dart';
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:teste_firebase/pages/nova_venda.dart';
-import '../model/model_vendas.dart';
 
 class PaginaBase extends StatefulWidget {
   const PaginaBase({super.key});
@@ -20,7 +18,7 @@ class PaginaBaseState extends State<PaginaBase> {
   late final VendaCubit cubit; //começo do get.find()
 
   @override
-  void initState() {
+  initState() {
     super.initState();
     cubit = BlocProvider.of<VendaCubit>(context); //seria o Get.find()
     cubit.getData();
@@ -28,7 +26,7 @@ class PaginaBaseState extends State<PaginaBase> {
       if (event is ErrorEstadoVenda) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(event.menssagem),
+            content: Text(event.mensagem),
           ),
         );
       }
@@ -45,25 +43,30 @@ class PaginaBaseState extends State<PaginaBase> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Container(
-          padding: const EdgeInsets.only(
-            left: 20,
-            right: 20,
-          ),
-          child: Column(
-            children: [
-              TextFormField(
+        child: Column(
+          children: [
+            Container(
+              padding:
+                  const EdgeInsets.only(left: 4, right: 4, top: 10, bottom: 10),
+              decoration: const BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(30)),
+              ),
+              child: TextFormField(
                 decoration: InputDecoration(
-                  suffix: IconButton(
-                    icon: const Icon(Icons.search),
-                    onPressed: () {},
-                  ),
-                ),
+                    hintText: 'Pesquisar..',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    suffixIcon: IconButton(
+                        onPressed: () {}, icon: const Icon(Icons.search))),
               ),
-              const SizedBox(
-                height: 30,
-              ),
-              Expanded(
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.only(left: 15, right: 15),
                 child: BlocBuilder(
                   bloc: cubit,
                   builder: (context, state) {
@@ -87,6 +90,8 @@ class PaginaBaseState extends State<PaginaBase> {
                             cliente: state.vendas[index].cliente.toUpperCase(),
                             produto: state.vendas[index].produto,
                             valor: state.vendas[index].valor,
+                            index: index,
+                            vendas: state.vendas,
                           );
                         },
                       );
@@ -103,8 +108,8 @@ class PaginaBaseState extends State<PaginaBase> {
                   },
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
       floatingActionButton: Container(

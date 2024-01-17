@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teste_firebase/blocs/venda_cubit.dart';
+import 'package:teste_firebase/blocs/venda/venda_cubit.dart';
 
 import 'package:teste_firebase/pages/pagina_base.dart';
 

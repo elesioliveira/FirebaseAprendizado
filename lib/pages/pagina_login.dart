@@ -1,32 +1,18 @@
 import 'package:teste_firebase/pages/pagina_cadastrar_usuario.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class LoginPagina extends StatefulWidget {
+  const LoginPagina({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<LoginPagina> createState() => _LoginPaginaState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _LoginPaginaState extends State<LoginPagina> {
   TextEditingController email = TextEditingController();
   TextEditingController senha = TextEditingController();
   ValueNotifier<bool> logandoSistema = ValueNotifier<bool>(false);
   ValueNotifier<bool> concordarTermos = ValueNotifier<bool>(false);
-
-  Future<void> loginUsuario(String email, String senha) async {
-    try {
-      final credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: senha);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
-      }
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +120,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               ? null
                               : () async {
                                   logandoSistema.value = !logandoSistema.value;
-                                  await loginUsuario(email.text, senha.text);
+
+                                  // await loginUsuario(email.text, senha.text);
+
                                   logandoSistema.value = !logandoSistema.value;
                                 },
                           child: Center(
