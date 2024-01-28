@@ -2,21 +2,18 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teste_firebase/blocs/venda/venda_cubit.dart';
-import 'package:teste_firebase/componentes/textformfield_componente.dart';
+import 'package:teste_firebase/pages/venda/blocs/venda/venda_cubit.dart';
 import 'package:teste_firebase/metodos/validadores.dart';
-import 'package:teste_firebase/model/model_vendas.dart';
+import '../../../componentes/textformfield_componente.dart';
 
-class AtualizarVendaPage extends StatefulWidget {
-  const AtualizarVendaPage({super.key, required this.venda});
-
-  final Venda venda;
+class NovaVenda extends StatefulWidget {
+  const NovaVenda({super.key});
 
   @override
-  State<AtualizarVendaPage> createState() => _AtualizarVendaPageState();
+  State<NovaVenda> createState() => _NovaVendaState();
 }
 
-class _AtualizarVendaPageState extends State<AtualizarVendaPage> {
+class _NovaVendaState extends State<NovaVenda> {
   TextEditingController numeroVenda = TextEditingController();
   TextEditingController cpf = TextEditingController();
   TextEditingController cliente = TextEditingController();
@@ -31,15 +28,6 @@ class _AtualizarVendaPageState extends State<AtualizarVendaPage> {
   void initState() {
     super.initState();
     cubit = BlocProvider.of<VendaCubit>(context); //seria o Get.find()
-    // Preencher os controladores com os valores da venda
-    numeroVenda.text = widget.venda.numeroVenda;
-    cpf.text = widget.venda.cpf;
-    cliente.text = widget.venda.cliente;
-    vendedor.text = widget.venda.vendedor;
-    dataVenda.text = widget.venda.dataVenda;
-    valor.text = widget.venda.valor;
-    entregarAte.text = widget.venda.entregarAte;
-    produto.text = widget.venda.produto;
   }
 
   @override
@@ -61,7 +49,7 @@ class _AtualizarVendaPageState extends State<AtualizarVendaPage> {
               ),
               child: const Center(
                   child: Text(
-                'Atualizar venda',
+                'Nova venda',
                 style: TextStyle(
                     fontWeight: FontWeight.w300,
                     fontSize: 20,
@@ -175,7 +163,7 @@ class _AtualizarVendaPageState extends State<AtualizarVendaPage> {
                         GestureDetector(
                           onTap: () async {
                             if (formKey.currentState!.validate()) {
-                              await cubit.atualizarVenda(
+                              await cubit.adicionarNovaVenda(
                                   venda: cubit.vendas,
                                   context: context,
                                   numeroVenda: numeroVenda.text,
@@ -187,7 +175,7 @@ class _AtualizarVendaPageState extends State<AtualizarVendaPage> {
                                   produto: produto.text,
                                   entregarAte: entregarAte.text);
                               cubit.vendas.clear();
-                              await cubit.getData();
+                              await cubit.consultarVendas();
                             }
                           },
                           child: Container(

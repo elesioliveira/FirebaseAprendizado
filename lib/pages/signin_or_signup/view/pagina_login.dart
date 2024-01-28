@@ -1,5 +1,6 @@
-import 'package:teste_firebase/pages/pagina_cadastrar_usuario.dart';
+import 'package:teste_firebase/pages/signin_or_signup/view/pagina_cadastrar_usuario.dart';
 import 'package:flutter/material.dart';
+import 'package:teste_firebase/repository/repository_vendas.dart';
 
 class LoginPagina extends StatefulWidget {
   const LoginPagina({super.key});
@@ -121,7 +122,8 @@ class _LoginPaginaState extends State<LoginPagina> {
                               : () async {
                                   logandoSistema.value = !logandoSistema.value;
 
-                                  // await loginUsuario(email.text, senha.text);
+                                  await signInWithEmailAndPassword(
+                                      email.text, senha.text, context);
 
                                   logandoSistema.value = !logandoSistema.value;
                                 },
@@ -218,11 +220,10 @@ class _LoginPaginaState extends State<LoginPagina> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          print('clicou');
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => NovoUsuario()),
+                                builder: (context) => const NovoUsuario()),
                           );
                         },
                         child: const Text(

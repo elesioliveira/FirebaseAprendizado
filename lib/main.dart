@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teste_firebase/blocs/venda/venda_cubit.dart';
-
-import 'package:teste_firebase/pages/pagina_base.dart';
+import 'package:teste_firebase/pages/venda/blocs/venda/venda_cubit.dart';
+import 'package:teste_firebase/pages/base/view/pagina_base.dart';
 
 import 'firebase_options.dart';
 
@@ -37,7 +36,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
             useMaterial3: true,
           ),
-          home: const PaginaBase(),
+          home: const BaseScreen(),
         ));
   }
 }

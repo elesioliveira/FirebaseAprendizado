@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teste_firebase/blocs/venda/venda_state.dart';
+import 'package:teste_firebase/pages/venda/blocs/venda/venda_state.dart';
 import 'package:teste_firebase/model/model_vendas.dart';
 
 class VendaCubit extends Cubit<EstadoDaVenda> {
@@ -12,7 +12,7 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
 
   VendaCubit() : super(EstadoInicialVenda());
 
-  Future<void> getData() async {
+  Future<void> consultarVendas() async {
     CollectionReference venda = FirebaseFirestore.instance.collection('vendas');
     emit(CarregandoVenda());
 
@@ -25,7 +25,11 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
         vendas.add(venda);
       }
 
-      emit(VendaCarregada(vendas: vendas));
+      if (vendas.isNotEmpty) {
+        emit(VendaCarregada(vendas: vendas));
+      } else {
+        emit(EstadoInicialVenda());
+      }
     } catch (e) {
       emit(ErrorEstadoVenda(mensagem: "Erro ao obter dados da coleção: $e"));
     }
@@ -44,7 +48,11 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
           content: Text('Venda excluída com sucesso!'),
         ),
       );
-      Navigator.of(context).pop(); // Fechar o diálogo
+      if (vendas.isEmpty) {
+        emit(EstadoInicialVenda());
+      }
+
+      Navigator.of(context).pop();
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -95,6 +103,13 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
     await reference.doc(numeroVenda).set(dados).then((value) {
       // Adicionar a nova venda à lista local
       venda.add(Venda.fromMap(dados));
+
+      // Mostrar a mensagem de sucesso
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Venda adicionada com sucesso!'),
+        ),
+      );
       Navigator.pop(context);
     }).catchError(
       (error) {
@@ -104,13 +119,6 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
           ),
         );
       },
-    );
-
-    // Mostrar a mensagem de sucesso
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Venda adicionada com sucesso!'),
-      ),
     );
   }
 
@@ -160,5 +168,31 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
         content: Text('Venda atualizada!'),
       ),
     );
+  }
+
+  Future<void> filtrarVendas({required String cliente}) async {
+    CollectionReference venda = FirebaseFirestore.instance.collection('vendas');
+
+    emit(CarregandoVenda());
+
+    try {
+      QuerySnapshot querySnapshot =
+          await venda.where('cliente', isGreaterThanOrEqualTo: cliente).get();
+
+      for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
+        Venda venda =
+            Venda.fromMap(documentSnapshot.data() as Map<String, dynamic>);
+
+        vendas.add(venda);
+      }
+
+      if (vendas.isNotEmpty) {
+        emit(VendaCarregada(vendas: vendas));
+      } else {
+        emit(EstadoInicialVenda());
+      }
+    } catch (e) {
+      emit(ErrorEstadoVenda(mensagem: "Erro ao obter dados $e"));
+    }
   }
 }

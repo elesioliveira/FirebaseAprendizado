@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teste_firebase/blocs/venda/venda_cubit.dart';
+import 'package:teste_firebase/pages/venda/blocs/venda/venda_cubit.dart';
 
 import 'package:teste_firebase/repository/repository_vendas.dart';
 
@@ -49,7 +49,7 @@ class _MostrarDialogState extends State<MostrarDialog> {
             await cubit.excluirVenda(
                 context: context, idDoDocumento: widget.idDoDocumento);
             cubit.vendas.clear();
-            await cubit.getData();
+            await cubit.consultarVendas();
           },
           child: const Text('Confirmar'),
         ),

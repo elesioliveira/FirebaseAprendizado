@@ -1,27 +1,23 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:teste_firebase/identity/controllers.dart';
 
 class NovoUsuario extends StatefulWidget {
-  NovoUsuario({super.key});
-
-  TextEditingController email = TextEditingController();
-  TextEditingController senha = TextEditingController();
-  TextEditingController nome = TextEditingController();
-  TextEditingController telefone = TextEditingController();
+  const NovoUsuario({super.key});
 
   @override
   State<NovoUsuario> createState() => NovoUsuarioState();
 }
 
 class NovoUsuarioState extends State<NovoUsuario> {
+  final ControllersText controllers = ControllersText();
   @override
   Widget build(BuildContext context) {
     ValueNotifier<bool> criandoUsuario = ValueNotifier<bool>(false);
     return SafeArea(
       child: Scaffold(
-        body: Container(
+        body: SizedBox(
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -80,7 +76,7 @@ class NovoUsuarioState extends State<NovoUsuario> {
                         height: 15,
                       ),
                       TextFormField(
-                        controller: widget.nome,
+                        controller: controllers.nome,
                         keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(labelText: 'Name'),
                       ),
@@ -88,7 +84,7 @@ class NovoUsuarioState extends State<NovoUsuario> {
                         height: 15,
                       ),
                       TextFormField(
-                        controller: widget.telefone,
+                        controller: controllers.telefone,
                         keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(labelText: 'Phone'),
                       ),
@@ -96,7 +92,7 @@ class NovoUsuarioState extends State<NovoUsuario> {
                         height: 15,
                       ),
                       TextFormField(
-                        controller: widget.email,
+                        controller: controllers.email,
                         keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(labelText: 'Email'),
                       ),
@@ -104,7 +100,7 @@ class NovoUsuarioState extends State<NovoUsuario> {
                         height: 15,
                       ),
                       TextFormField(
-                        controller: widget.senha,
+                        controller: controllers.senha,
                         keyboardType: TextInputType.emailAddress,
                         obscureText: true,
                         decoration:

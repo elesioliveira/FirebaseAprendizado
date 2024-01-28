@@ -25,14 +25,17 @@ class EntradaDeTexto extends StatefulWidget {
 class _EntradaDeTextoState extends State<EntradaDeTexto> {
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      initialValue: widget.initialValue,
-      validator: widget.validator,
-      inputFormatters: widget.inputFormatters,
-      controller: widget.controller,
-      keyboardType: widget.keyboardType,
-      decoration: InputDecoration(
-        labelText: widget.labelText,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: TextFormField(
+        initialValue: widget.initialValue,
+        validator: widget.validator,
+        inputFormatters: widget.inputFormatters,
+        controller: widget.controller,
+        keyboardType: widget.keyboardType,
+        decoration: InputDecoration(
+          labelText: widget.labelText,
+        ),
       ),
     );
   }

@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/model/model_vendas.dart';
+import 'package:teste_firebase/pages/base/view/pagina_base.dart';
 
 class VendasRepository {
   List<Venda> vendas = [];
@@ -33,5 +33,26 @@ class VendasRepository {
         // print('A conta já existe para esse e-mail.');
       }
     }
+  }
+}
+
+Future<void> signInWithEmailAndPassword(
+    String email, String password, context) async {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  try {
+    await auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const BaseScreen()),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Erro ao fazer login: $e'),
+      ),
+    );
   }
 }
