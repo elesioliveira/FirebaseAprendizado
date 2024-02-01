@@ -123,21 +123,28 @@ class BaseScreenState extends State<BaseScreen> {
                         child: CircularProgressIndicator(),
                       );
                     } else if (state is VendaCarregada) {
-                      return ListView.builder(
-                        itemCount: state.vendas.length,
-                        itemBuilder: (context, index) {
-                          // Exibir os dados em um widget (substitua pelo seu widget personalizado)
-                          return OrdemDeVenda(
-                            primeiraLetraNome:
-                                state.vendas[index].cliente[0].toUpperCase(),
-                            idExclusao: state.vendas[index].numeroVenda,
-                            cliente: state.vendas[index].cliente.toUpperCase(),
-                            produto: state.vendas[index].produto,
-                            valor: state.vendas[index].valor,
-                            index: index,
-                            vendas: state.vendas,
-                          );
+                      return RefreshIndicator(
+                        onRefresh: () async {
+                          cubit.vendas.clear();
+                          await cubit.consultarVendas();
                         },
+                        child: ListView.builder(
+                          itemCount: state.vendas.length,
+                          itemBuilder: (context, index) {
+                            // retornando valores do data firebase
+                            return OrdemDeVenda(
+                              primeiraLetraNome:
+                                  state.vendas[index].cliente[0].toUpperCase(),
+                              idExclusao: state.vendas[index].numeroVenda,
+                              cliente:
+                                  state.vendas[index].cliente.toUpperCase(),
+                              produto: state.vendas[index].produto,
+                              valor: state.vendas[index].valor,
+                              index: index,
+                              vendas: state.vendas,
+                            );
+                          },
+                        ),
                       );
                     } else {
                       return const Center(
@@ -199,11 +206,11 @@ class BaseScreenState extends State<BaseScreen> {
                           height: 12,
                         ),
                         Text(
-                          'Sophia',
+                          'Sua empresa aqui',
                           style: TextStyle(fontSize: 28, color: Colors.white),
                         ),
                         Text(
-                          '@sophia.com',
+                          'Commerce',
                           style: TextStyle(fontSize: 14, color: Colors.white),
                         ),
                       ],

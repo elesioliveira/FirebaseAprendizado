@@ -11,7 +11,7 @@ class NovoUsuario extends StatefulWidget {
 }
 
 class NovoUsuarioState extends State<NovoUsuario> {
-  final ControllersText controllers = ControllersText();
+  final SellControllers controllers = SellControllers();
   @override
   Widget build(BuildContext context) {
     ValueNotifier<bool> criandoUsuario = ValueNotifier<bool>(false);

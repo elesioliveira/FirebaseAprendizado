@@ -29,6 +29,16 @@ class Validadores {
     return null;
   }
 
+  static String? rg(String? rg) {
+    if (rg == null || rg.isEmpty) {
+      return 'Preencha o seu RG corretamente';
+    }
+    if (rg.length < 8 || rg.length > 8) {
+      return 'Preencha o CPF corretamente';
+    }
+    return null;
+  }
+
   static String? data(String? data) {
     if (data == null || data.isEmpty) {
       return 'Preencha a data corretamente';

@@ -6,15 +6,25 @@ abstract class NavigationTabs {
   static const int treePage = 2;
 }
 
-class ControllerNovoCliente with ChangeNotifier {
+class PageviewController with ChangeNotifier {
   late PageController _pageController;
   int _value = 0;
 
   PageController get pageController => _pageController;
   int get currentIndex => _value;
 
+  void incrementarValor() {
+    print(_value);
+    if (_value == 2) return;
+
+    _value++;
+    notifyListeners();
+    _pageController.nextPage(
+        duration: const Duration(milliseconds: 500), curve: Curves.linear);
+  }
+
   // Construtor para realizar a inicialização
-  ControllerNovoCliente() {
+  PageviewController() {
     initNavigation(
       pageController: PageController(initialPage: NavigationTabs.firstPage),
       currentIndex: NavigationTabs.firstPage,

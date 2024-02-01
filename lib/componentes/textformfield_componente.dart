@@ -4,12 +4,13 @@ import 'package:flutter/services.dart';
 class EntradaDeTexto extends StatefulWidget {
   EntradaDeTexto(
       {super.key,
-      required this.controller,
+      this.controller,
       required this.keyboardType,
       required this.labelText,
       this.inputFormatters,
       this.validator,
-      this.initialValue});
+      this.initialValue,
+      this.suffixIcon});
 
   final TextEditingController? controller;
   final TextInputType? keyboardType;
@@ -17,6 +18,8 @@ class EntradaDeTexto extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
   final String? Function(String?)? validator;
   String? initialValue;
+
+  Widget? suffixIcon;
 
   @override
   State<EntradaDeTexto> createState() => _EntradaDeTextoState();
@@ -34,6 +37,7 @@ class _EntradaDeTextoState extends State<EntradaDeTexto> {
         controller: widget.controller,
         keyboardType: widget.keyboardType,
         decoration: InputDecoration(
+          suffixIcon: widget.suffixIcon,
           labelText: widget.labelText,
         ),
       ),

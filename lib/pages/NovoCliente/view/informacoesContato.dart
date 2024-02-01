@@ -1,13 +1,31 @@
+import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teste_firebase/componentes/textformfield_componente.dart';
 import 'package:teste_firebase/identity/controllers.dart';
 
-class MeiosDeContato extends StatelessWidget {
+import 'package:teste_firebase/pages/NovoCliente/controller/bloc/novo_cliente_cubit.dart';
+
+class MeiosDeContato extends StatefulWidget {
   const MeiosDeContato({super.key});
 
   @override
+  State<MeiosDeContato> createState() => _MeiosDeContatoState();
+}
+
+class _MeiosDeContatoState extends State<MeiosDeContato> {
+  late final EstadoControllersText cubit;
+  @override
+  void initState() {
+    super.initState();
+    cubit =
+        BlocProvider.of<EstadoControllersText>(context); //seria o Get.find()
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final ControllersText controllers = ControllersText();
+    final PagevViewTextControllers controllers = PagevViewTextControllers();
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -42,15 +60,19 @@ class MeiosDeContato extends StatelessWidget {
                     child: Column(
                       children: [
                         EntradaDeTexto(
-                            controller: controllers.nomeTextEditController,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              TelefoneInputFormatter()
+                            ],
+                            controller: cubit.telefone1,
                             keyboardType: TextInputType.name,
                             labelText: 'TELEFONE 1'),
                         EntradaDeTexto(
-                            controller: controllers.nomeTextEditController,
+                            controller: cubit.telefone2,
                             keyboardType: TextInputType.name,
                             labelText: 'TELEFONE 2'),
                         EntradaDeTexto(
-                            controller: controllers.nomeTextEditController,
+                            controller: cubit.email,
                             keyboardType: TextInputType.name,
                             labelText: 'EMAIL'),
                       ],
@@ -60,19 +82,6 @@ class MeiosDeContato extends StatelessWidget {
               ),
             ),
           ),
-        ),
-      ),
-      floatingActionButton: SizedBox(
-        width: MediaQuery.sizeOf(context).width,
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Finalizar'),
-            ),
-          ],
         ),
       ),
     );
