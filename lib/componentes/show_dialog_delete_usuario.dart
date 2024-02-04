@@ -49,7 +49,7 @@ class _MostrarDialogState extends State<MostrarDialog> {
             await cubit.excluirVenda(
                 context: context, idDoDocumento: widget.idDoDocumento);
             cubit.vendas.clear();
-            await cubit.consultarVendas();
+            await cubit.buscarVendas();
           },
           child: const Text('Confirmar'),
         ),

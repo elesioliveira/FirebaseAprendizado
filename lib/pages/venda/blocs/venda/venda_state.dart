@@ -1,5 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'package:teste_firebase/model/model_vendas.dart';
+import 'package:teste_firebase/pages/venda/model/model_vendas.dart';
 
 abstract class EstadoDaVenda {}
 

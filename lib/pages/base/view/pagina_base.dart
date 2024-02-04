@@ -5,7 +5,7 @@ import 'package:teste_firebase/pages/venda/blocs/venda/venda_state.dart';
 import 'package:teste_firebase/componentes/drawer_options.dart';
 
 import 'package:teste_firebase/componentes/ordem_de_venda.dart';
-import 'package:teste_firebase/pages/NovoCliente/view/base_screen_new_client.dart';
+import 'package:teste_firebase/pages/Client/view/base_screen_new_client.dart';
 
 import 'package:teste_firebase/pages/venda/page/nova_venda.dart';
 
@@ -18,13 +18,17 @@ class BaseScreen extends StatefulWidget {
 
 class BaseScreenState extends State<BaseScreen> {
   late final VendaCubit cubit; //começo do get.find()
-  TextEditingController filtrarVendas = TextEditingController();
+
+  NotificarTextFormField atualizarTextFormField = NotificarTextFormField();
+  late String value;
 
   @override
   initState() {
     super.initState();
     cubit = BlocProvider.of<VendaCubit>(context); //seria o Get.find()
-    cubit.consultarVendas();
+    value = atualizarTextFormField.filtrarVendas.text;
+    cubit.buscarVendas();
+    atualizarTextFormField.atualizarTextFormField(value);
     cubit.stream.listen((event) {
       if (event is ErrorEstadoVenda) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -62,44 +66,50 @@ class BaseScreenState extends State<BaseScreen> {
                 borderRadius: BorderRadius.all(Radius.circular(30)),
               ),
               child: ValueListenableBuilder(
-                valueListenable: filtrarVendas,
+                valueListenable: atualizarTextFormField.filtrarVendas,
                 builder: (context, valor, child) {
                   return TextFormField(
+                    onChanged: (value) {
+                      value = value;
+                    },
                     textAlign: TextAlign.start,
                     // onChanged: (value) {},
-                    controller: filtrarVendas,
+                    controller: atualizarTextFormField.filtrarVendas,
                     decoration: InputDecoration(
                       hintText: 'Pesquisar..',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      suffixIcon: filtrarVendas.text.isEmpty
-                          ? null
-                          : Padding(
-                              padding: const EdgeInsets.only(right: 15),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  IconButton(
-                                    onPressed: () async {
-                                      cubit.vendas.clear();
-                                      await cubit.filtrarVendas(
-                                          cliente:
-                                              filtrarVendas.text.toUpperCase());
-                                    },
-                                    icon: const Icon(Icons.search),
+                      suffixIcon:
+                          atualizarTextFormField.filtrarVendas.text.isEmpty
+                              ? null
+                              : Padding(
+                                  padding: const EdgeInsets.only(right: 15),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      IconButton(
+                                        onPressed: () async {
+                                          cubit.vendas.clear();
+                                          await cubit.filtrarVendas(
+                                              cliente: atualizarTextFormField
+                                                  .filtrarVendas.text
+                                                  .toUpperCase());
+                                        },
+                                        icon: const Icon(Icons.search),
+                                      ),
+                                      IconButton(
+                                          onPressed: () async {
+                                            atualizarTextFormField
+                                                .filtrarVendas.text = '';
+                                            cubit.vendas.clear();
+                                            await cubit.buscarVendas();
+                                          },
+                                          icon: const Icon(Icons.close))
+                                    ],
                                   ),
-                                  IconButton(
-                                      onPressed: () async {
-                                        filtrarVendas.text = '';
-                                        cubit.vendas.clear();
-                                        await cubit.consultarVendas();
-                                      },
-                                      icon: const Icon(Icons.close))
-                                ],
-                              ),
-                            ),
+                                ),
                     ),
                   );
                 },
@@ -126,7 +136,7 @@ class BaseScreenState extends State<BaseScreen> {
                       return RefreshIndicator(
                         onRefresh: () async {
                           cubit.vendas.clear();
-                          await cubit.consultarVendas();
+                          await cubit.buscarVendas();
                         },
                         child: ListView.builder(
                           itemCount: state.vendas.length,
@@ -171,7 +181,7 @@ class BaseScreenState extends State<BaseScreen> {
             visualDensity: VisualDensity.adaptivePlatformDensity,
             color: Colors.white,
             onPressed: () {
-              filtrarVendas.text = '';
+              atualizarTextFormField.filtrarVendas.text = '';
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const NovaVenda()),

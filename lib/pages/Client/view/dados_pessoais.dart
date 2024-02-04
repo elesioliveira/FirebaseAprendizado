@@ -5,9 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teste_firebase/componentes/textformfield_componente.dart';
 import 'package:teste_firebase/metodos/validadores.dart';
 
-import 'package:teste_firebase/pages/NovoCliente/controller/bloc/novo_cliente_cubit.dart';
+import 'package:teste_firebase/pages/Client/controller/bloc/client_cubit.dart';
 
-import 'package:teste_firebase/pages/NovoCliente/controller/controller_cliente.dart';
+import 'package:teste_firebase/pages/Client/controller/controller_page_view.dart';
 
 class DadosPessoais extends StatefulWidget {
   const DadosPessoais({super.key});
@@ -19,13 +19,13 @@ class DadosPessoais extends StatefulWidget {
 class _DadosPessoaisState extends State<DadosPessoais> {
   late PageviewController clienteControllers = PageviewController();
 
-  late final EstadoControllersText cubit;
+  late final NovoClienteController cubit;
 
   @override
   void initState() {
     super.initState();
     cubit =
-        BlocProvider.of<EstadoControllersText>(context); //seria o Get.find()
+        BlocProvider.of<NovoClienteController>(context); //seria o Get.find()
   }
 
   @override

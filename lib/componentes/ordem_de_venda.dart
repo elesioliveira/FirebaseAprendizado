@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:teste_firebase/componentes/show_dialog_delete_usuario.dart';
 import 'package:teste_firebase/pages/venda/page/atualizar_venda.dart';
 
-import '../model/model_vendas.dart';
+import '../pages/venda/model/model_vendas.dart';
 
 class OrdemDeVenda extends StatefulWidget {
   const OrdemDeVenda({

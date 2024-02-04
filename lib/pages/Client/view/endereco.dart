@@ -5,7 +5,7 @@ import 'package:search_cep/search_cep.dart';
 import 'package:teste_firebase/componentes/textformfield_componente.dart';
 import 'package:teste_firebase/metodos/validadores.dart';
 
-import 'package:teste_firebase/pages/NovoCliente/controller/bloc/novo_cliente_cubit.dart';
+import 'package:teste_firebase/pages/Client/controller/bloc/client_cubit.dart';
 
 class ClienteEndereco extends StatefulWidget {
   const ClienteEndereco({super.key});
@@ -15,14 +15,14 @@ class ClienteEndereco extends StatefulWidget {
 }
 
 class _ClienteEnderecoState extends State<ClienteEndereco> {
-  late final EstadoControllersText cubit;
+  late final NovoClienteController cubit;
   final postmonSearchCep = PostmonSearchCep();
 
   @override
   void initState() {
     super.initState();
     cubit =
-        BlocProvider.of<EstadoControllersText>(context); //seria o Get.find()
+        BlocProvider.of<NovoClienteController>(context); //seria o Get.find()
   }
 
   @override
@@ -65,7 +65,7 @@ class _ClienteEnderecoState extends State<ClienteEndereco> {
                             children: [
                               EntradaDeTexto(
                                   validator: Validadores.nome,
-                                  controller: cubit.rua,
+                                  controller: cubit.endereco,
                                   keyboardType: TextInputType.name,
                                   labelText: 'Rua'),
                               EntradaDeTexto(
@@ -92,7 +92,7 @@ class _ClienteEnderecoState extends State<ClienteEndereco> {
                                           ? null
                                           : IconButton(
                                               onPressed: () async {
-                                                cubit.buscarCep(context,
+                                                cubit.fetchCep(context,
                                                     cubit.bairro.toString());
                                               },
                                               icon: const Icon(

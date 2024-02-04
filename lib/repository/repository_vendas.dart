@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:teste_firebase/model/model_vendas.dart';
+import 'package:teste_firebase/pages/venda/model/model_vendas.dart';
 import 'package:teste_firebase/pages/base/view/pagina_base.dart';
 
 class VendasRepository {

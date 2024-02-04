@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teste_firebase/componentes/textformfield_componente.dart';
 import 'package:teste_firebase/identity/controllers.dart';
 
-import 'package:teste_firebase/pages/NovoCliente/controller/bloc/novo_cliente_cubit.dart';
+import 'package:teste_firebase/pages/Client/controller/bloc/client_cubit.dart';
 
 class MeiosDeContato extends StatefulWidget {
   const MeiosDeContato({super.key});
@@ -15,12 +15,12 @@ class MeiosDeContato extends StatefulWidget {
 }
 
 class _MeiosDeContatoState extends State<MeiosDeContato> {
-  late final EstadoControllersText cubit;
+  late final NovoClienteController cubit;
   @override
   void initState() {
     super.initState();
     cubit =
-        BlocProvider.of<EstadoControllersText>(context); //seria o Get.find()
+        BlocProvider.of<NovoClienteController>(context); //seria o Get.find()
   }
 
   @override

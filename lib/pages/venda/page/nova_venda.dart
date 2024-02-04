@@ -175,7 +175,7 @@ class _NovaVendaState extends State<NovaVenda> {
                                   produto: produto.text,
                                   entregarAte: entregarAte.text);
                               cubit.vendas.clear();
-                              await cubit.consultarVendas();
+                              await cubit.buscarVendas();
                             }
                           },
                           child: Container(

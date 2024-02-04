@@ -5,14 +5,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teste_firebase/pages/venda/blocs/venda/venda_state.dart';
-import 'package:teste_firebase/model/model_vendas.dart';
+import 'package:teste_firebase/pages/venda/model/model_vendas.dart';
 
 class VendaCubit extends Cubit<EstadoDaVenda> {
   final List<Venda> vendas = [];
-
   VendaCubit() : super(EstadoInicialVenda());
 
-  Future<void> consultarVendas() async {
+  Future<void> buscarVendas() async {
     CollectionReference venda = FirebaseFirestore.instance.collection('vendas');
     emit(CarregandoVenda());
 
@@ -62,7 +61,7 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
     });
   }
 
-  Future adicionarNovaVenda({
+  Future<void> adicionarNovaVenda({
     required BuildContext context,
     required String numeroVenda,
     required String cpf,
@@ -102,7 +101,6 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
 
     await reference.doc(numeroVenda).set(dados).then((value) {
       // Adicionar a nova venda à lista local
-      venda.add(Venda.fromMap(dados));
 
       // Mostrar a mensagem de sucesso
       ScaffoldMessenger.of(context).showSnackBar(
@@ -194,5 +192,16 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
     } catch (e) {
       emit(ErrorEstadoVenda(mensagem: "Erro ao obter dados $e"));
     }
+  }
+}
+
+class NotificarTextFormField with ChangeNotifier {
+  TextEditingController filtrarVendas = TextEditingController();
+
+  Future<void> atualizarTextFormField(String value) async {
+    Future.delayed(const Duration(seconds: 10));
+    filtrarVendas.text = value;
+
+    notifyListeners();
   }
 }

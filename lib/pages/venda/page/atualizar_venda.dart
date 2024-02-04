@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teste_firebase/pages/venda/blocs/venda/venda_cubit.dart';
 import 'package:teste_firebase/componentes/textformfield_componente.dart';
 import 'package:teste_firebase/metodos/validadores.dart';
-import 'package:teste_firebase/model/model_vendas.dart';
+import 'package:teste_firebase/pages/venda/model/model_vendas.dart';
 
 class AtualizarVendaPage extends StatefulWidget {
   const AtualizarVendaPage({super.key, required this.venda});
@@ -187,7 +187,7 @@ class _AtualizarVendaPageState extends State<AtualizarVendaPage> {
                                   produto: produto.text,
                                   entregarAte: entregarAte.text);
                               cubit.vendas.clear();
-                              await cubit.consultarVendas();
+                              await cubit.buscarVendas();
                             }
                           },
                           child: Container(

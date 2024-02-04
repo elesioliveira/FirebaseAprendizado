@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teste_firebase/identity/controllers.dart';
-import 'package:teste_firebase/pages/NovoCliente/controller/bloc/novo_cliente_cubit.dart';
-import 'package:teste_firebase/pages/NovoCliente/controller/controller_cliente.dart';
-import 'package:teste_firebase/pages/NovoCliente/view/dados_pessoais.dart';
-import 'package:teste_firebase/pages/NovoCliente/view/endereco.dart';
-import 'package:teste_firebase/pages/NovoCliente/view/informacoesContato.dart';
+import 'package:teste_firebase/pages/Client/controller/bloc/client_cubit.dart';
+import 'package:teste_firebase/pages/Client/controller/controller_page_view.dart';
+import 'package:teste_firebase/pages/Client/model/novo_cliente_model.dart';
+import 'package:teste_firebase/pages/Client/view/dados_pessoais.dart';
+import 'package:teste_firebase/pages/Client/view/endereco.dart';
+import 'package:teste_firebase/pages/Client/view/informacoesContato.dart';
 
 class NovoCliente extends StatefulWidget {
   NovoCliente({Key? key}) : super(key: key);
@@ -16,13 +17,13 @@ class NovoCliente extends StatefulWidget {
 
 class _NovoClienteState extends State<NovoCliente> {
   final PageviewController clienteController = PageviewController();
-  late final EstadoControllersText cubit;
+  late final NovoClienteController cubit;
 
   @override
   void initState() {
     super.initState();
     cubit =
-        BlocProvider.of<EstadoControllersText>(context); //seria o Get.find()
+        BlocProvider.of<NovoClienteController>(context); //seria o Get.find()
   }
 
   @override
@@ -67,7 +68,6 @@ class _NovoClienteState extends State<NovoCliente> {
                               if (clienteController.currentIndex == 0) {
                                 if (cubit.dadosPessoaisFormKey.currentState!
                                     .validate()) {
-                                  print('deu certo');
                                   clienteController.incrementarValor();
                                   return;
                                 }
@@ -75,7 +75,6 @@ class _NovoClienteState extends State<NovoCliente> {
                               if (clienteController.currentIndex == 1) {
                                 if (cubit.enderecoFormKey.currentState!
                                     .validate()) {
-                                  print('deu certo');
                                   clienteController.incrementarValor();
                                   return;
                                 }
@@ -84,7 +83,25 @@ class _NovoClienteState extends State<NovoCliente> {
                             child: const Text('Próximo'),
                           )
                         : ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              final client = Client(
+                                  nome: cubit.nome.text,
+                                  cpf: cubit.cpf.text,
+                                  dataNascimento: cubit.dataNascimento.text,
+                                  endereco: cubit.endereco.text,
+                                  numero: cubit.numero.text,
+                                  bairro: cubit.bairro.text,
+                                  cidade: cubit.cidade.text,
+                                  estado: cubit.estado.text,
+                                  email: cubit.email.text,
+                                  numeroResindencia: cubit.numero.text,
+                                  telefone1: cubit.telefone1.text,
+                                  telefone2: cubit.telefone2.text,
+                                  cep: cubit.cep.text);
+
+                              cubit.addNewClient(
+                                  client, cubit.clients, context);
+                            },
                             child: const Text('Finalizar'),
                           ),
                   );
@@ -102,7 +119,6 @@ class _NovoClienteState extends State<NovoCliente> {
                 }
                 if (clienteController.currentIndex == 0) {
                   if (cubit.dadosPessoaisFormKey.currentState!.validate()) {
-                    print('deu certo');
                     clienteController.incrementarValor();
                     clienteController.navigatePageView(index);
                     return;
@@ -110,7 +126,6 @@ class _NovoClienteState extends State<NovoCliente> {
                 }
                 if (clienteController.currentIndex == 1) {
                   if (cubit.enderecoFormKey.currentState!.validate()) {
-                    print('deu certo');
                     clienteController.incrementarValor();
                     clienteController.navigatePageView(index);
                     return;
