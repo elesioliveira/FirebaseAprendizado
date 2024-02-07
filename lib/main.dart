@@ -5,9 +5,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teste_firebase/bindings/bindings.dart';
-
-import 'package:teste_firebase/pages/base/view/pagina_base.dart';
-
+import 'package:teste_firebase/views/pages/base/view/pagina_base.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {

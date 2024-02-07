@@ -1,7 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:teste_firebase/identity/controllers.dart';
+import 'package:teste_firebase/views/pages/venda/identity/controllers.dart';
 
 class NovoUsuario extends StatefulWidget {
   const NovoUsuario({super.key});

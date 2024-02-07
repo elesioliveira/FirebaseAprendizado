@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teste_firebase/componentes/textformfield_componente.dart';
-import 'package:teste_firebase/identity/controllers.dart';
 
-import 'package:teste_firebase/pages/Client/controller/bloc/client_cubit.dart';
+import 'package:teste_firebase/views/pages/Client/controller/bloc/client_cubit.dart';
 
 class MeiosDeContato extends StatefulWidget {
   const MeiosDeContato({super.key});
@@ -15,17 +14,15 @@ class MeiosDeContato extends StatefulWidget {
 }
 
 class _MeiosDeContatoState extends State<MeiosDeContato> {
-  late final NovoClienteController cubit;
+  late final ClientController cubit;
   @override
   void initState() {
     super.initState();
-    cubit =
-        BlocProvider.of<NovoClienteController>(context); //seria o Get.find()
+    cubit = BlocProvider.of<ClientController>(context); //seria o Get.find()
   }
 
   @override
   Widget build(BuildContext context) {
-    final PagevViewTextControllers controllers = PagevViewTextControllers();
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(

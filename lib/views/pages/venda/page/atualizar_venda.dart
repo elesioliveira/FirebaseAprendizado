@@ -2,10 +2,11 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teste_firebase/pages/venda/blocs/venda/venda_cubit.dart';
+
 import 'package:teste_firebase/componentes/textformfield_componente.dart';
-import 'package:teste_firebase/metodos/validadores.dart';
-import 'package:teste_firebase/pages/venda/model/model_vendas.dart';
+import 'package:teste_firebase/validadores/validadores.dart';
+import 'package:teste_firebase/views/pages/venda/controller/bloc/controller_cubit.dart';
+import 'package:teste_firebase/views/pages/venda/model/model_vendas.dart';
 
 class AtualizarVendaPage extends StatefulWidget {
   const AtualizarVendaPage({super.key, required this.venda});
@@ -30,7 +31,7 @@ class _AtualizarVendaPageState extends State<AtualizarVendaPage> {
   @override
   void initState() {
     super.initState();
-    cubit = BlocProvider.of<VendaCubit>(context); //seria o Get.find()
+    cubit = BlocProvider.of<VendaCubit>(context);
     // Preencher os controladores com os valores da venda
     numeroVenda.text = widget.venda.numeroVenda;
     cpf.text = widget.venda.cpf;
@@ -187,7 +188,7 @@ class _AtualizarVendaPageState extends State<AtualizarVendaPage> {
                                   produto: produto.text,
                                   entregarAte: entregarAte.text);
                               cubit.vendas.clear();
-                              await cubit.buscarVendas();
+                              await cubit.fetchDataSell();
                             }
                           },
                           child: Container(

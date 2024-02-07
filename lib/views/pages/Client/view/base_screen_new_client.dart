@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teste_firebase/identity/controllers.dart';
-import 'package:teste_firebase/pages/Client/controller/bloc/client_cubit.dart';
-import 'package:teste_firebase/pages/Client/controller/controller_page_view.dart';
-import 'package:teste_firebase/pages/Client/model/novo_cliente_model.dart';
-import 'package:teste_firebase/pages/Client/view/dados_pessoais.dart';
-import 'package:teste_firebase/pages/Client/view/endereco.dart';
-import 'package:teste_firebase/pages/Client/view/informacoesContato.dart';
+
+import 'package:teste_firebase/views/pages/venda/controller/bloc/controller_cubit.dart';
+import 'package:teste_firebase/views/pages/venda/identity/controllers.dart';
+import 'package:teste_firebase/views/pages/Client/controller/bloc/client_cubit.dart';
+import 'package:teste_firebase/views/pages/Client/controller/pageview/controller_page_view.dart';
+import 'package:teste_firebase/views/pages/Client/model/novo_cliente_model.dart';
+import 'package:teste_firebase/views/pages/Client/view/dados_pessoais.dart';
+import 'package:teste_firebase/views/pages/Client/view/endereco.dart';
+import 'package:teste_firebase/views/pages/Client/view/informacoesContato.dart';
 
 class NovoCliente extends StatefulWidget {
   NovoCliente({Key? key}) : super(key: key);
@@ -17,24 +19,37 @@ class NovoCliente extends StatefulWidget {
 
 class _NovoClienteState extends State<NovoCliente> {
   final PageviewController clienteController = PageviewController();
-  late final NovoClienteController cubit;
+  late ClientController cubit;
+  late VendaCubit cubitVenda;
 
   @override
   void initState() {
     super.initState();
-    cubit =
-        BlocProvider.of<NovoClienteController>(context); //seria o Get.find()
+    cubit = BlocProvider.of<ClientController>(context);
+    cubitVenda = BlocProvider.of<VendaCubit>(context);
+
+    cubit.clients.clear();
+    cubit.fetchClient();
   }
+
+  // @override
+  // void dispose() {
+  //   cubit.close();
+  //   super.dispose();
+  // }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           centerTitle: true,
           actions: [
             IconButton(
                 onPressed: () {
+                  cubit.limparTodos();
+                  cubitVenda.vendas.clear();
                   Navigator.pop(context);
                 },
                 icon: const Icon(Icons.close))
@@ -69,6 +84,7 @@ class _NovoClienteState extends State<NovoCliente> {
                                 if (cubit.dadosPessoaisFormKey.currentState!
                                     .validate()) {
                                   clienteController.incrementarValor();
+                                  cubit.focusScopeNode;
                                   return;
                                 }
                               }
@@ -76,6 +92,7 @@ class _NovoClienteState extends State<NovoCliente> {
                                 if (cubit.enderecoFormKey.currentState!
                                     .validate()) {
                                   clienteController.incrementarValor();
+                                  cubit.focusScopeNode;
                                   return;
                                 }
                               }

@@ -1,9 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teste_firebase/pages/venda/blocs/venda/venda_cubit.dart';
 
-import 'package:teste_firebase/repository/repository_vendas.dart';
+import 'package:teste_firebase/views/pages/signin_or_signup/controller/controller_login.dart';
+import 'package:teste_firebase/views/pages/venda/controller/bloc/controller_cubit.dart';
 
 class MostrarDialog extends StatefulWidget {
   const MostrarDialog({
@@ -46,10 +46,10 @@ class _MostrarDialogState extends State<MostrarDialog> {
         TextButton(
           onPressed: () async {
             // Excluir o documento ao confirmar
-            await cubit.excluirVenda(
+            await cubit.deleteSale(
                 context: context, idDoDocumento: widget.idDoDocumento);
             cubit.vendas.clear();
-            await cubit.buscarVendas();
+            await cubit.fetchDataSell();
           },
           child: const Text('Confirmar'),
         ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class EntradaDeTexto extends StatefulWidget {
-  EntradaDeTexto(
+  const EntradaDeTexto(
       {super.key,
       this.controller,
       required this.keyboardType,
@@ -17,9 +17,8 @@ class EntradaDeTexto extends StatefulWidget {
   final String? labelText;
   final List<TextInputFormatter>? inputFormatters;
   final String? Function(String?)? validator;
-  String? initialValue;
-
-  Widget? suffixIcon;
+  final String? initialValue;
+  final Widget? suffixIcon;
 
   @override
   State<EntradaDeTexto> createState() => _EntradaDeTextoState();

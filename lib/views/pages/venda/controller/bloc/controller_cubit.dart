@@ -1,17 +1,17 @@
-// ignore_for_file: avoid_print
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:custom_alert_snackbar/custom_alert_snackbar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teste_firebase/pages/venda/blocs/venda/venda_state.dart';
-import 'package:teste_firebase/pages/venda/model/model_vendas.dart';
+
+import 'package:teste_firebase/views/pages/venda/controller/bloc/cubit_state.dart';
+import 'package:teste_firebase/views/pages/venda/model/model_vendas.dart';
 
 class VendaCubit extends Cubit<EstadoDaVenda> {
   final List<Venda> vendas = [];
   VendaCubit() : super(EstadoInicialVenda());
 
-  Future<void> buscarVendas() async {
+  Future<void> fetchDataSell() async {
     CollectionReference venda = FirebaseFirestore.instance.collection('vendas');
     emit(CarregandoVenda());
 
@@ -34,8 +34,7 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
     }
   }
 
-  // Função para excluir o documento
-  Future<void> excluirVenda(
+  Future<void> deleteSale(
       {required String idDoDocumento, required BuildContext context}) async {
     CollectionReference usuariosCollection =
         FirebaseFirestore.instance.collection('vendas');
@@ -61,61 +60,55 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
     });
   }
 
-  Future<void> adicionarNovaVenda({
+  emitScreen() {
+    emit(EstadoInicialVenda());
+  }
+
+  Future<void> addNewSale({
     required BuildContext context,
-    required String numeroVenda,
-    required String cpf,
-    required String cliente,
-    required String vendedor,
-    required String dataVenda,
-    required String valor,
-    required String produto,
-    required String entregarAte,
-    required List<Venda> venda,
+    required Venda venda,
+    required List<Venda> vendas,
   }) async {
+    emit(CarregandoVenda());
     CollectionReference reference =
         FirebaseFirestore.instance.collection('vendas');
-
-    // Verificar se já existe uma venda com o mesmo número
-    if (venda.any((v) => v.numeroVenda == numeroVenda)) {
+    if (vendas.any((v) => v.numeroVenda == venda.numeroVenda)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Numero da venda já existente!'),
+          content: Text('Numero da venda já existe!'),
         ),
       );
       return;
     }
 
-    // Se chegou aqui, a venda não existe ainda
-
     Map<String, dynamic> dados = {
-      'numeroVenda': numeroVenda,
-      'cpf': cpf,
-      'cliente': cliente,
-      'vendedor': vendedor,
-      'dataVenda': dataVenda,
-      'produto': produto,
-      'valor': valor,
-      'entregarAte': entregarAte,
+      'numeroVenda': venda.numeroVenda,
+      'cpf': venda.cpf,
+      'cliente': venda.cliente,
+      'vendedor': venda.vendedor,
+      'dataVenda': venda.dataVenda,
+      'produto': venda.produto,
+      'valor': venda.valor,
+      'entregarAte': venda.entregarAte,
     };
 
-    await reference.doc(numeroVenda).set(dados).then((value) {
-      // Adicionar a nova venda à lista local
-
-      // Mostrar a mensagem de sucesso
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Venda adicionada com sucesso!'),
-        ),
-      );
-      Navigator.pop(context);
+    await reference.doc(venda.numeroVenda).set(dados).then((value) {
+      CustomAlertSnack.init(context,
+          size: MediaQuery.sizeOf(context),
+          backgrounds: Colors.green[800],
+          title: 'OK',
+          text: 'Venda adicionada com sucesso!',
+          textAlign: TextAlign.center,
+          color: Colors.green[800],
+          alignCenter: true);
     }).catchError(
       (error) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(error.toString()),
-          ),
-        );
+        CustomAlertSnack.init(context,
+            size: MediaQuery.sizeOf(context),
+            title: 'Erro',
+            text: 'Erro ao lançar a venda!',
+            textAlign: TextAlign.center,
+            alignCenter: true);
       },
     );
   }

@@ -1,6 +1,6 @@
-import 'package:teste_firebase/pages/signin_or_signup/view/pagina_cadastrar_usuario.dart';
+import 'package:teste_firebase/views/pages/signin_or_signup/view/pagina_cadastrar_usuario.dart';
 import 'package:flutter/material.dart';
-import 'package:teste_firebase/repository/repository_vendas.dart';
+import 'package:teste_firebase/views/pages/signin_or_signup/controller/controller_login.dart';
 
 class LoginPagina extends StatefulWidget {
   const LoginPagina({super.key});
@@ -10,10 +10,7 @@ class LoginPagina extends StatefulWidget {
 }
 
 class _LoginPaginaState extends State<LoginPagina> {
-  TextEditingController email = TextEditingController();
-  TextEditingController senha = TextEditingController();
-  ValueNotifier<bool> logandoSistema = ValueNotifier<bool>(false);
-  ValueNotifier<bool> concordarTermos = ValueNotifier<bool>(false);
+  late VendasRepository controllerLogin;
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +38,7 @@ class _LoginPaginaState extends State<LoginPagina> {
                     height: 50,
                   ),
                   TextFormField(
-                    controller: email,
+                    controller: controllerLogin.email,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(labelText: 'Email'),
                   ),
@@ -49,7 +46,7 @@ class _LoginPaginaState extends State<LoginPagina> {
                     height: 20,
                   ),
                   TextFormField(
-                    controller: senha,
+                    controller: controllerLogin.senha,
                     keyboardType: TextInputType.text,
                     decoration: const InputDecoration(labelText: 'Password'),
                   ),
@@ -74,13 +71,14 @@ class _LoginPaginaState extends State<LoginPagina> {
                       SizedBox(
                         width: 7,
                         child: ListenableBuilder(
-                          listenable: concordarTermos,
+                          listenable: controllerLogin.concordarTermos,
                           builder: (context, child) {
                             return Checkbox(
                               shape: const CircleBorder(),
-                              value: concordarTermos.value,
+                              value: controllerLogin.concordarTermos.value,
                               onChanged: (value) {
-                                concordarTermos.value = !concordarTermos.value;
+                                controllerLogin.concordarTermos.value =
+                                    !controllerLogin.concordarTermos.value;
                               },
                             );
                           },
@@ -114,21 +112,26 @@ class _LoginPaginaState extends State<LoginPagina> {
                     ],
                   ),
                   ValueListenableBuilder(
-                      valueListenable: logandoSistema,
+                      valueListenable: controllerLogin.logandoSistema,
                       builder: (context, value, child) {
                         return ElevatedButton(
-                          onPressed: logandoSistema.value
+                          onPressed: controllerLogin.logandoSistema.value
                               ? null
                               : () async {
-                                  logandoSistema.value = !logandoSistema.value;
+                                  controllerLogin.logandoSistema.value =
+                                      !controllerLogin.logandoSistema.value;
 
-                                  await signInWithEmailAndPassword(
-                                      email.text, senha.text, context);
+                                  await controllerLogin
+                                      .signInWithEmailAndPassword(
+                                          controllerLogin.email.text,
+                                          controllerLogin.senha.text,
+                                          context);
 
-                                  logandoSistema.value = !logandoSistema.value;
+                                  controllerLogin.logandoSistema.value =
+                                      !controllerLogin.logandoSistema.value;
                                 },
                           child: Center(
-                            child: logandoSistema.value
+                            child: controllerLogin.logandoSistema.value
                                 ? const CircularProgressIndicator()
                                 : const Text(
                                     'Sign In',

@@ -1,4 +1,4 @@
-import 'package:teste_firebase/pages/Client/model/novo_cliente_model.dart';
+import 'package:teste_firebase/views/pages/Client/model/novo_cliente_model.dart';
 
 abstract class EstadoCliente {}
 

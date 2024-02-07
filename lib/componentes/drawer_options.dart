@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class DrawerOptions extends StatelessWidget {
-  const DrawerOptions(
+class DescriptionTileOnDrawer extends StatelessWidget {
+  const DescriptionTileOnDrawer(
       {Key? key, required this.title, this.trailing, required this.proximaTela})
       : super(key: key);
 

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:teste_firebase/pages/venda/blocs/venda/venda_cubit.dart';
-import 'package:teste_firebase/pages/venda/blocs/venda/venda_state.dart';
+
 import 'package:teste_firebase/componentes/drawer_options.dart';
 
 import 'package:teste_firebase/componentes/ordem_de_venda.dart';
-import 'package:teste_firebase/pages/Client/view/base_screen_new_client.dart';
+import 'package:teste_firebase/views/pages/Client/view/base_screen_new_client.dart';
+import 'package:teste_firebase/views/pages/base/controller/controller_base_screen.dart';
+import 'package:teste_firebase/views/pages/venda/controller/bloc/controller_cubit.dart';
+import 'package:teste_firebase/views/pages/venda/controller/bloc/cubit_state.dart';
 
-import 'package:teste_firebase/pages/venda/page/nova_venda.dart';
+import 'package:teste_firebase/views/pages/venda/page/nova_venda.dart';
 
 class BaseScreen extends StatefulWidget {
   const BaseScreen({super.key});
@@ -17,27 +19,26 @@ class BaseScreen extends StatefulWidget {
 }
 
 class BaseScreenState extends State<BaseScreen> {
-  late final VendaCubit cubit; //começo do get.find()
-
-  NotificarTextFormField atualizarTextFormField = NotificarTextFormField();
+  TextEditingController filtrarVendas = TextEditingController();
+  late VendaCubit cubit;
   late String value;
+  late StringListener stringListener = StringListener(filtrarVendas.text);
 
   @override
   initState() {
     super.initState();
     cubit = BlocProvider.of<VendaCubit>(context); //seria o Get.find()
-    value = atualizarTextFormField.filtrarVendas.text;
-    cubit.buscarVendas();
-    atualizarTextFormField.atualizarTextFormField(value);
-    cubit.stream.listen((event) {
-      if (event is ErrorEstadoVenda) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(event.mensagem),
-          ),
-        );
-      }
-    });
+    cubit.fetchDataSell();
+
+    // cubit.stream.listen((event) {
+    //   if (event is ErrorEstadoVenda) {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       SnackBar(
+    //         content: Text(event.mensagem),
+    //       ),
+    //     );
+    //   }
+    // });
   }
 
   @override
@@ -66,7 +67,7 @@ class BaseScreenState extends State<BaseScreen> {
                 borderRadius: BorderRadius.all(Radius.circular(30)),
               ),
               child: ValueListenableBuilder(
-                valueListenable: atualizarTextFormField.filtrarVendas,
+                valueListenable: stringListener,
                 builder: (context, valor, child) {
                   return TextFormField(
                     onChanged: (value) {
@@ -74,42 +75,39 @@ class BaseScreenState extends State<BaseScreen> {
                     },
                     textAlign: TextAlign.start,
                     // onChanged: (value) {},
-                    controller: atualizarTextFormField.filtrarVendas,
+                    controller: filtrarVendas,
                     decoration: InputDecoration(
                       hintText: 'Pesquisar..',
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
-                      suffixIcon:
-                          atualizarTextFormField.filtrarVendas.text.isEmpty
-                              ? null
-                              : Padding(
-                                  padding: const EdgeInsets.only(right: 15),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      IconButton(
-                                        onPressed: () async {
-                                          cubit.vendas.clear();
-                                          await cubit.filtrarVendas(
-                                              cliente: atualizarTextFormField
-                                                  .filtrarVendas.text
-                                                  .toUpperCase());
-                                        },
-                                        icon: const Icon(Icons.search),
-                                      ),
-                                      IconButton(
-                                          onPressed: () async {
-                                            atualizarTextFormField
-                                                .filtrarVendas.text = '';
-                                            cubit.vendas.clear();
-                                            await cubit.buscarVendas();
-                                          },
-                                          icon: const Icon(Icons.close))
-                                    ],
+                      suffixIcon: filtrarVendas.text.isEmpty
+                          ? null
+                          : Padding(
+                              padding: const EdgeInsets.only(right: 15),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  IconButton(
+                                    onPressed: () async {
+                                      cubit.vendas.clear();
+                                      await cubit.filtrarVendas(
+                                          cliente:
+                                              filtrarVendas.text.toUpperCase());
+                                    },
+                                    icon: const Icon(Icons.search),
                                   ),
-                                ),
+                                  IconButton(
+                                      onPressed: () async {
+                                        filtrarVendas.text = '';
+                                        cubit.vendas.clear();
+                                        await cubit.fetchDataSell();
+                                      },
+                                      icon: const Icon(Icons.close))
+                                ],
+                              ),
+                            ),
                     ),
                   );
                 },
@@ -136,24 +134,28 @@ class BaseScreenState extends State<BaseScreen> {
                       return RefreshIndicator(
                         onRefresh: () async {
                           cubit.vendas.clear();
-                          await cubit.buscarVendas();
+                          await cubit.fetchDataSell();
                         },
-                        child: ListView.builder(
-                          itemCount: state.vendas.length,
-                          itemBuilder: (context, index) {
-                            // retornando valores do data firebase
-                            return OrdemDeVenda(
-                              primeiraLetraNome:
-                                  state.vendas[index].cliente[0].toUpperCase(),
-                              idExclusao: state.vendas[index].numeroVenda,
-                              cliente:
-                                  state.vendas[index].cliente.toUpperCase(),
-                              produto: state.vendas[index].produto,
-                              valor: state.vendas[index].valor,
-                              index: index,
-                              vendas: state.vendas,
-                            );
-                          },
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 20),
+                          child: ListView.builder(
+                            itemCount: state.vendas.length,
+                            itemBuilder: (context, index) {
+                              // retornando valores do data firebase
+                              return OrdemDeVenda(
+                                primeiraLetraNome: state
+                                    .vendas[index].cliente[0]
+                                    .toUpperCase(),
+                                idExclusao: state.vendas[index].numeroVenda,
+                                cliente:
+                                    state.vendas[index].cliente.toUpperCase(),
+                                produto: state.vendas[index].produto,
+                                valor: state.vendas[index].valor,
+                                index: index,
+                                vendas: state.vendas,
+                              );
+                            },
+                          ),
                         ),
                       );
                     } else {
@@ -181,7 +183,7 @@ class BaseScreenState extends State<BaseScreen> {
             visualDensity: VisualDensity.adaptivePlatformDensity,
             color: Colors.white,
             onPressed: () {
-              atualizarTextFormField.filtrarVendas.text = '';
+              // atualizarTextFormField.filtrarVendas.text = '';
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const NovaVenda()),
@@ -233,7 +235,7 @@ class BaseScreenState extends State<BaseScreen> {
                 title: const Text('Cadastro'),
                 // Adicione o conteúdo que será exibido quando o ExpansionTile estiver expandido.
                 children: [
-                  DrawerOptions(
+                  DescriptionTileOnDrawer(
                     title: 'Clientes',
                     trailing: const Icon(Icons.person),
                     proximaTela: NovoCliente(),

@@ -3,18 +3,15 @@ import 'package:custom_alert_snackbar/custom_alert_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:search_cep/search_cep.dart';
-import 'package:teste_firebase/pages/Client/controller/bloc/client_state.dart';
-import 'package:teste_firebase/pages/Client/model/novo_cliente_model.dart';
+import 'package:teste_firebase/views/pages/Client/controller/bloc/client_state.dart';
+import 'package:teste_firebase/views/pages/Client/model/novo_cliente_model.dart';
 
-class NovoClienteController extends Cubit<EstadoCliente> {
-  NovoClienteController() : super(StateInitialClient());
+class ClientController extends Cubit<EstadoCliente> {
+  ClientController() : super(StateInitialClient());
 
   final List<Client> clients = [];
-
-  TextEditingController sobrenome = TextEditingController();
   TextEditingController nome = TextEditingController();
   TextEditingController cpf = TextEditingController();
-  TextEditingController rg = TextEditingController();
   TextEditingController dataNascimento = TextEditingController();
   TextEditingController endereco = TextEditingController();
   TextEditingController numero = TextEditingController();
@@ -25,15 +22,31 @@ class NovoClienteController extends Cubit<EstadoCliente> {
   TextEditingController telefone1 = TextEditingController();
   TextEditingController telefone2 = TextEditingController();
   TextEditingController email = TextEditingController();
+
   final dadosPessoaisFormKey = GlobalKey<FormState>();
   final enderecoFormKey = GlobalKey<FormState>();
   final contatoFormKey = GlobalKey<FormState>();
+
   final FocusScopeNode focusScopeNode = FocusScopeNode();
 
-  Future fetchCep(context, String cep) async {
+  void limparTodos() {
+    nome.clear();
+    cpf.clear();
+    dataNascimento.clear();
+    endereco.clear();
+    numero.clear();
+    bairro.clear();
+    cidade.clear();
+    estado.clear();
+    telefone1.clear();
+    telefone2.clear();
+    email.clear();
+  }
+
+  Future fetchCep({context, required String cep}) async {
     final postmonSearchCep = PostmonSearchCep();
-    final infoCepJSON = await postmonSearchCep.searchInfoByCep(cep: '89036200');
-    print(infoCepJSON);
+    final infoCepJSON = await postmonSearchCep.searchInfoByCep(cep: cep);
+
     infoCepJSON.fold((searchInfoError) {
       CustomAlertSnack.init(context,
           size: MediaQuery.sizeOf(context),
@@ -51,9 +64,8 @@ class NovoClienteController extends Cubit<EstadoCliente> {
   }
 
   Future<void> fetchClient() async {
-    emit(StateLoadingClient());
     CollectionReference clientFireStore =
-        FirebaseFirestore.instance.collection('client');
+        FirebaseFirestore.instance.collection('cliente');
     try {
       QuerySnapshot data = await clientFireStore.get();
       for (QueryDocumentSnapshot documentSnapshot in data.docs) {
@@ -80,8 +92,9 @@ class NovoClienteController extends Cubit<EstadoCliente> {
     if (clients.any((element) => element.cpf == client.cpf)) {
       CustomAlertSnack.init(context,
           size: MediaQuery.sizeOf(context),
-          title: 'MEU TESTE',
-          text: 'Lorem Ipsum',
+          color: Colors.red,
+          title: 'Erro',
+          text: 'Cliente já existe',
           textAlign: TextAlign.center,
           alignCenter: true);
       return;
@@ -106,10 +119,13 @@ class NovoClienteController extends Cubit<EstadoCliente> {
     await reference.doc(client.cpf).set(dados).then((value) {
       CustomAlertSnack.init(context,
           size: MediaQuery.sizeOf(context),
+          backgrounds: Colors.green[800],
           title: 'OK',
           text: 'Cliente adicionado com sucesso',
           textAlign: TextAlign.center,
+          color: Colors.green[800],
           alignCenter: true);
+      limparTodos();
       Navigator.pop(context);
     }).catchError((e) {
       CustomAlertSnack.init(context,
