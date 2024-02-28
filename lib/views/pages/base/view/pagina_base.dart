@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:provider/provider.dart';
 import 'package:teste_firebase/componentes/drawer_options.dart';
-
 import 'package:teste_firebase/componentes/ordem_de_venda.dart';
+import 'package:teste_firebase/views/pages/Client/controller/controller/client_cubit.dart';
 import 'package:teste_firebase/views/pages/Client/view/base_screen_new_client.dart';
 import 'package:teste_firebase/views/pages/base/controller/controller_base_screen.dart';
-import 'package:teste_firebase/views/pages/venda/controller/bloc/controller_cubit.dart';
-import 'package:teste_firebase/views/pages/venda/controller/bloc/cubit_state.dart';
+
+import 'package:teste_firebase/views/pages/filtro_por_periodo/view/screen_page_filter.dart';
+import 'package:teste_firebase/views/pages/venda/controller/venda_bloc/controller_cubit.dart';
+import 'package:teste_firebase/views/pages/venda/controller/venda_bloc/cubit_state.dart';
 
 import 'package:teste_firebase/views/pages/venda/page/nova_venda.dart';
 
@@ -19,95 +21,88 @@ class BaseScreen extends StatefulWidget {
 }
 
 class BaseScreenState extends State<BaseScreen> {
-  TextEditingController filtrarVendas = TextEditingController();
   late VendaCubit cubit;
-  late String value;
-  late StringListener stringListener = StringListener(filtrarVendas.text);
+  late ClientController clientCubit;
+  late List<String> nomeDosClientes;
+  final BaseController baseController = BaseController();
+  final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  String searchTitle = '';
 
   @override
   initState() {
     super.initState();
-    cubit = BlocProvider.of<VendaCubit>(context); //seria o Get.find()
+    cubit = BlocProvider.of<VendaCubit>(context);
+    clientCubit = BlocProvider.of<ClientController>(context);
+    clientCubit.fetchClient();
     cubit.fetchDataSell();
-
-    // cubit.stream.listen((event) {
-    //   if (event is ErrorEstadoVenda) {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       SnackBar(
-    //         content: Text(event.mensagem),
-    //       ),
-    //     );
-    //   }
-    // });
-  }
-
-  @override
-  void dispose() {
-    cubit.close();
-    super.dispose();
+    cubit.stream.listen((event) {
+      if (event is ErrorEstadoVenda) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(event.mensagem)),
+        );
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
-
     return SafeArea(
       child: Scaffold(
-        key: scaffoldKey,
+        backgroundColor: Colors.grey.shade100,
         appBar: AppBar(
+          backgroundColor: Theme.of(context).colorScheme.primary,
           centerTitle: true,
           title: const Text('Lista de Vendas'),
         ),
         body: Column(
           children: [
             Container(
-              padding:
-                  const EdgeInsets.only(left: 4, right: 4, top: 10, bottom: 10),
+              padding: const EdgeInsets.all(20),
               decoration: const BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(30)),
               ),
-              child: ValueListenableBuilder(
-                valueListenable: stringListener,
-                builder: (context, valor, child) {
-                  return TextFormField(
-                    onChanged: (value) {
-                      value = value;
-                    },
-                    textAlign: TextAlign.start,
-                    // onChanged: (value) {},
-                    controller: filtrarVendas,
-                    decoration: InputDecoration(
-                      hintText: 'Pesquisar..',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      suffixIcon: filtrarVendas.text.isEmpty
-                          ? null
-                          : Padding(
-                              padding: const EdgeInsets.only(right: 15),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  IconButton(
-                                    onPressed: () async {
-                                      cubit.vendas.clear();
-                                      await cubit.filtrarVendas(
-                                          cliente:
-                                              filtrarVendas.text.toUpperCase());
+              child: AnimatedBuilder(
+                animation: baseController.searchController,
+                builder: (context, snapshot) {
+                  return Material(
+                    shape: OutlineInputBorder(
+                        borderSide: const BorderSide(width: 0.1),
+                        borderRadius: BorderRadius.circular(10)),
+                    elevation: 3.5,
+                    child: TextFormField(
+                      controller: baseController.searchController,
+                      onChanged: (value) {
+                        baseController.searchController.text = value;
+                      },
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        isDense: true,
+                        hintText: 'Pesquise aqui...',
+                        hintStyle: TextStyle(
+                          color: Colors.grey.shade400,
+                          fontSize: 14,
+                        ),
+                        suffixIcon:
+                            baseController.searchController.text.isNotEmpty
+                                ? IconButton(
+                                    onPressed: () {
+                                      baseController.limparSearchTitle();
                                     },
-                                    icon: const Icon(Icons.search),
-                                  ),
-                                  IconButton(
-                                      onPressed: () async {
-                                        filtrarVendas.text = '';
-                                        cubit.vendas.clear();
-                                        await cubit.fetchDataSell();
-                                      },
-                                      icon: const Icon(Icons.close))
-                                ],
-                              ),
-                            ),
+                                    icon: const Icon(
+                                      Icons.close,
+                                      size: 21,
+                                    ),
+                                  )
+                                : null,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: const BorderSide(
+                            width: 0,
+                            style: BorderStyle.none,
+                          ),
+                        ),
+                      ),
                     ),
                   );
                 },
@@ -138,7 +133,12 @@ class BaseScreenState extends State<BaseScreen> {
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 20),
-                          child: ListView.builder(
+                          child: ListView.separated(
+                            separatorBuilder: (context, index) {
+                              return const SizedBox(
+                                height: 5,
+                              );
+                            },
                             itemCount: state.vendas.length,
                             itemBuilder: (context, index) {
                               // retornando valores do data firebase
@@ -159,11 +159,17 @@ class BaseScreenState extends State<BaseScreen> {
                         ),
                       );
                     } else {
-                      return const Center(
+                      return Expanded(
                         child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.error),
-                            Text('Erro com a lista')
+                            GestureDetector(
+                                onTap: () {
+                                  cubit.fetchDataSell;
+                                },
+                                child: const Icon(Icons.error)),
+                            const Text('Erro com a lista')
                           ],
                         ),
                       );
@@ -174,22 +180,24 @@ class BaseScreenState extends State<BaseScreen> {
             ),
           ],
         ),
-        floatingActionButton: Container(
-          decoration: const BoxDecoration(
-            color: Colors.deepPurple,
-            shape: BoxShape.circle,
-          ),
-          child: IconButton(
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-            color: Colors.white,
-            onPressed: () {
-              // atualizarTextFormField.filtrarVendas.text = '';
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const NovaVenda()),
-              );
-            },
-            icon: const Icon(Icons.add),
+        floatingActionButton: Card(
+          elevation: 0.2,
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.deepPurple,
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              visualDensity: VisualDensity.adaptivePlatformDensity,
+              color: Colors.white,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NovaVenda()),
+                );
+              },
+              icon: const Icon(Icons.add),
+            ),
           ),
         ),
         drawer: Drawer(
@@ -247,8 +255,9 @@ class BaseScreenState extends State<BaseScreen> {
                 title: const Text('Vendas'),
                 // Adicione o conteúdo que será exibido quando o ExpansionTile estiver expandido.
                 children: const [
-                  ListTile(
-                    title: Text('Vendas por periodo'),
+                  DescriptionTileOnDrawer(
+                    title: 'Venda detalhada',
+                    proximaTela: ScreenFilterPage(),
                   ),
                   ListTile(
                     title: Text('Venda total no dia'),

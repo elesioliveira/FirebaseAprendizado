@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 
-class StringListener extends ValueNotifier<String> {
-  StringListener(String value) : super(value);
+class BaseController extends ChangeNotifier {
+  final TextEditingController searchController = TextEditingController();
 
-  // Método para atualizar o valor da String
-  void updateString(String newValue) {
-    value = newValue;
+  limparSearchTitle() {
+    searchController.text = '';
+  }
+
+  set searchTitle(String value) {
+    if (searchController.text != value) {
+      searchController.text = value;
+      notifyListeners();
+    }
   }
 }

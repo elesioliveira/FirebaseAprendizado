@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:custom_alert_snackbar/custom_alert_snackbar.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:teste_firebase/views/pages/venda/controller/bloc/cubit_state.dart';
+import 'package:teste_firebase/views/pages/venda/controller/venda_bloc/cubit_state.dart';
 import 'package:teste_firebase/views/pages/venda/model/model_vendas.dart';
 
 class VendaCubit extends Cubit<EstadoDaVenda> {
@@ -21,6 +20,7 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
       for (QueryDocumentSnapshot documentSnapshot in querySnapshot.docs) {
         Venda venda =
             Venda.fromMap(documentSnapshot.data() as Map<String, dynamic>);
+
         vendas.add(venda);
       }
 
@@ -30,6 +30,7 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
         emit(EstadoInicialVenda());
       }
     } catch (e) {
+      print(e.toString());
       emit(ErrorEstadoVenda(mensagem: "Erro ao obter dados da coleção: $e"));
     }
   }
@@ -60,57 +61,8 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
     });
   }
 
-  emitScreen() {
+  emiteScreenInitial() {
     emit(EstadoInicialVenda());
-  }
-
-  Future<void> addNewSale({
-    required BuildContext context,
-    required Venda venda,
-    required List<Venda> vendas,
-  }) async {
-    emit(CarregandoVenda());
-    CollectionReference reference =
-        FirebaseFirestore.instance.collection('vendas');
-    if (vendas.any((v) => v.numeroVenda == venda.numeroVenda)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Numero da venda já existe!'),
-        ),
-      );
-      return;
-    }
-
-    Map<String, dynamic> dados = {
-      'numeroVenda': venda.numeroVenda,
-      'cpf': venda.cpf,
-      'cliente': venda.cliente,
-      'vendedor': venda.vendedor,
-      'dataVenda': venda.dataVenda,
-      'produto': venda.produto,
-      'valor': venda.valor,
-      'entregarAte': venda.entregarAte,
-    };
-
-    await reference.doc(venda.numeroVenda).set(dados).then((value) {
-      CustomAlertSnack.init(context,
-          size: MediaQuery.sizeOf(context),
-          backgrounds: Colors.green[800],
-          title: 'OK',
-          text: 'Venda adicionada com sucesso!',
-          textAlign: TextAlign.center,
-          color: Colors.green[800],
-          alignCenter: true);
-    }).catchError(
-      (error) {
-        CustomAlertSnack.init(context,
-            size: MediaQuery.sizeOf(context),
-            title: 'Erro',
-            text: 'Erro ao lançar a venda!',
-            textAlign: TextAlign.center,
-            alignCenter: true);
-      },
-    );
   }
 
   Future atualizarVenda({
@@ -185,16 +137,5 @@ class VendaCubit extends Cubit<EstadoDaVenda> {
     } catch (e) {
       emit(ErrorEstadoVenda(mensagem: "Erro ao obter dados $e"));
     }
-  }
-}
-
-class NotificarTextFormField with ChangeNotifier {
-  TextEditingController filtrarVendas = TextEditingController();
-
-  Future<void> atualizarTextFormField(String value) async {
-    Future.delayed(const Duration(seconds: 10));
-    filtrarVendas.text = value;
-
-    notifyListeners();
   }
 }

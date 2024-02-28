@@ -4,7 +4,7 @@ import 'package:search_cep/search_cep.dart';
 import 'package:teste_firebase/componentes/textformfield_componente.dart';
 import 'package:teste_firebase/validadores/validadores.dart';
 
-import 'package:teste_firebase/views/pages/Client/controller/bloc/client_cubit.dart';
+import 'package:teste_firebase/views/pages/Client/controller/controller/client_cubit.dart';
 
 class ClienteEndereco extends StatefulWidget {
   const ClienteEndereco({super.key});

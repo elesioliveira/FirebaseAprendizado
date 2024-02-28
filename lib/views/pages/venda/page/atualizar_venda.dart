@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:teste_firebase/componentes/textformfield_componente.dart';
 import 'package:teste_firebase/validadores/validadores.dart';
-import 'package:teste_firebase/views/pages/venda/controller/bloc/controller_cubit.dart';
+import 'package:teste_firebase/views/pages/venda/controller/venda_bloc/controller_cubit.dart';
 import 'package:teste_firebase/views/pages/venda/model/model_vendas.dart';
 
 class AtualizarVendaPage extends StatefulWidget {

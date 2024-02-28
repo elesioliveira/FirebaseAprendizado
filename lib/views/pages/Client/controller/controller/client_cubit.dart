@@ -3,13 +3,13 @@ import 'package:custom_alert_snackbar/custom_alert_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:search_cep/search_cep.dart';
-import 'package:teste_firebase/views/pages/Client/controller/bloc/client_state.dart';
+import 'package:teste_firebase/views/pages/Client/controller/controller/client_state.dart';
 import 'package:teste_firebase/views/pages/Client/model/novo_cliente_model.dart';
 
 class ClientController extends Cubit<EstadoCliente> {
   ClientController() : super(StateInitialClient());
 
-  final List<Client> clients = [];
+  final List<Client> clientes = [];
   TextEditingController nome = TextEditingController();
   TextEditingController cpf = TextEditingController();
   TextEditingController dataNascimento = TextEditingController();
@@ -71,9 +71,9 @@ class ClientController extends Cubit<EstadoCliente> {
       for (QueryDocumentSnapshot documentSnapshot in data.docs) {
         Client client =
             Client.fromMap(documentSnapshot.data() as Map<String, dynamic>);
-        clients.add(client);
-        if (clients.isNotEmpty) {
-          emit(StateSucessedClien(client: clients));
+        clientes.add(client);
+        if (clientes.isNotEmpty) {
+          emit(StateSucessedClien(client: clientes));
         } else {
           emit(StateInitialClient());
         }

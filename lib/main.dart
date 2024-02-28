@@ -6,10 +6,14 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teste_firebase/bindings/bindings.dart';
 import 'package:teste_firebase/views/pages/base/view/pagina_base.dart';
+import 'package:teste_firebase/views/pages/filtro_por_periodo/view/screen_page_filter.dart';
+import 'package:teste_firebase/views/pages/filtro_por_periodo/view/screen_relatorio_carregado.dart';
+
+import 'package:teste_firebase/views/pages/signin_or_signup/view/pagina_login.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
-  debugPaintSizeEnabled = false; // Ativar debug painting de tamanhos
+  debugPaintSizeEnabled = true; // Ativar debug painting de tamanhos
   debugPaintBaselinesEnabled = false; // Ativar debug painting de baselines
   debugPaintLayerBordersEnabled =
       false; // Ativar debug painting de bordas de camada
@@ -29,7 +33,9 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
         providers: [
           vendaCubit,
-          novoCliente,
+          controllerClient,
+          controllerNewSale,
+          controllerFilterDateSale,
         ],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,

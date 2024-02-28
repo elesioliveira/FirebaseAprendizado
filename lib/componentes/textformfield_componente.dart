@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class EntradaDeTexto extends StatefulWidget {
-  const EntradaDeTexto(
-      {super.key,
-      this.controller,
-      required this.keyboardType,
-      required this.labelText,
-      this.inputFormatters,
-      this.validator,
-      this.initialValue,
-      this.suffixIcon});
+class EntradaDeTexto extends StatelessWidget {
+  const EntradaDeTexto({
+    Key? key,
+    this.controller,
+    this.keyboardType,
+    required this.labelText,
+    this.inputFormatters,
+    this.validator,
+    this.initialValue,
+    this.suffixIcon,
+    this.temBorda = false,
+  }) : super(key: key);
 
   final TextEditingController? controller;
   final TextInputType? keyboardType;
@@ -19,26 +21,20 @@ class EntradaDeTexto extends StatefulWidget {
   final String? Function(String?)? validator;
   final String? initialValue;
   final Widget? suffixIcon;
+  final bool temBorda;
 
-  @override
-  State<EntradaDeTexto> createState() => _EntradaDeTextoState();
-}
-
-class _EntradaDeTextoState extends State<EntradaDeTexto> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: TextFormField(
-        initialValue: widget.initialValue,
-        validator: widget.validator,
-        inputFormatters: widget.inputFormatters,
-        controller: widget.controller,
-        keyboardType: widget.keyboardType,
-        decoration: InputDecoration(
-          suffixIcon: widget.suffixIcon,
-          labelText: widget.labelText,
-        ),
+    return TextFormField(
+      initialValue: initialValue,
+      validator: validator,
+      inputFormatters: inputFormatters,
+      controller: controller,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        border: temBorda ? const OutlineInputBorder() : null,
+        suffixIcon: suffixIcon,
+        labelText: labelText,
       ),
     );
   }

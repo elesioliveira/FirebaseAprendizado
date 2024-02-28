@@ -2,10 +2,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teste_firebase/views/pages/base/view/pagina_base.dart';
 
-class VendasRepository {
+class ControllerLogin {
   ValueNotifier<bool> logandoSistema = ValueNotifier<bool>(false);
   ValueNotifier<bool> concordarTermos = ValueNotifier<bool>(false);
-
   TextEditingController email = TextEditingController();
   TextEditingController senha = TextEditingController();
 
@@ -17,9 +16,7 @@ class VendasRepository {
         email: emailAddress,
         password: password,
       );
-
       await usercredential.user!.updateDisplayName(nome);
-      Navigator.pop(context);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         return ScaffoldMessenger.of(context).showSnackBar(
@@ -30,10 +27,9 @@ class VendasRepository {
       } else if (e.code == 'email-already-in-use') {
         return ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('A conta já existe para esse e-mail.'),
+            content: Text('A conta já existe neste e-mail.'),
           ),
         );
-        // print('A conta já existe para esse e-mail.');
       }
     }
   }

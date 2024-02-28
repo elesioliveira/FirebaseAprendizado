@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:teste_firebase/views/pages/venda/controller/bloc/controller_cubit.dart';
+import 'package:teste_firebase/views/pages/venda/controller/venda_bloc/controller_cubit.dart';
 import 'package:teste_firebase/views/pages/venda/identity/controllers.dart';
-import 'package:teste_firebase/views/pages/Client/controller/bloc/client_cubit.dart';
+import 'package:teste_firebase/views/pages/Client/controller/controller/client_cubit.dart';
 import 'package:teste_firebase/views/pages/Client/controller/pageview/controller_page_view.dart';
 import 'package:teste_firebase/views/pages/Client/model/novo_cliente_model.dart';
 import 'package:teste_firebase/views/pages/Client/view/dados_pessoais.dart';
@@ -27,8 +27,7 @@ class _NovoClienteState extends State<NovoCliente> {
     super.initState();
     cubit = BlocProvider.of<ClientController>(context);
     cubitVenda = BlocProvider.of<VendaCubit>(context);
-
-    cubit.clients.clear();
+    cubit.clientes.clear();
     cubit.fetchClient();
   }
 
@@ -68,61 +67,62 @@ class _NovoClienteState extends State<NovoCliente> {
                 MeiosDeContato(),
               ],
             ),
-            AnimatedBuilder(
-                animation: clienteController,
-                builder: (context, _) {
-                  return Positioned(
-                    bottom: 15,
-                    right: 10,
-                    child: clienteController.currentIndex < 2
-                        ? ElevatedButton(
-                            onPressed: () {
-                              // if (clienteController.currentIndex <= 2) {
-                              //   return;
-                              // }
-                              if (clienteController.currentIndex == 0) {
-                                if (cubit.dadosPessoaisFormKey.currentState!
-                                    .validate()) {
-                                  clienteController.incrementarValor();
-                                  cubit.focusScopeNode;
-                                  return;
+            Positioned(
+              bottom: 15,
+              right: 15,
+              child: AnimatedBuilder(
+                  animation: clienteController,
+                  builder: (context, _) {
+                    return Positioned(
+                      bottom: 15,
+                      right: 10,
+                      child: clienteController.currentIndex < 2
+                          ? ElevatedButton(
+                              onPressed: () {
+                                if (clienteController.currentIndex == 0) {
+                                  if (cubit.dadosPessoaisFormKey.currentState!
+                                      .validate()) {
+                                    clienteController.incrementarValor();
+                                    cubit.focusScopeNode;
+                                    return;
+                                  }
                                 }
-                              }
-                              if (clienteController.currentIndex == 1) {
-                                if (cubit.enderecoFormKey.currentState!
-                                    .validate()) {
-                                  clienteController.incrementarValor();
-                                  cubit.focusScopeNode;
-                                  return;
+                                if (clienteController.currentIndex == 1) {
+                                  if (cubit.enderecoFormKey.currentState!
+                                      .validate()) {
+                                    clienteController.incrementarValor();
+                                    cubit.focusScopeNode;
+                                    return;
+                                  }
                                 }
-                              }
-                            },
-                            child: const Text('Próximo'),
-                          )
-                        : ElevatedButton(
-                            onPressed: () {
-                              final client = Client(
-                                  nome: cubit.nome.text,
-                                  cpf: cubit.cpf.text,
-                                  dataNascimento: cubit.dataNascimento.text,
-                                  endereco: cubit.endereco.text,
-                                  numero: cubit.numero.text,
-                                  bairro: cubit.bairro.text,
-                                  cidade: cubit.cidade.text,
-                                  estado: cubit.estado.text,
-                                  email: cubit.email.text,
-                                  numeroResindencia: cubit.numero.text,
-                                  telefone1: cubit.telefone1.text,
-                                  telefone2: cubit.telefone2.text,
-                                  cep: cubit.cep.text);
+                              },
+                              child: const Text('Próximo'),
+                            )
+                          : ElevatedButton(
+                              onPressed: () {
+                                final client = Client(
+                                    nome: cubit.nome.text,
+                                    cpf: cubit.cpf.text,
+                                    dataNascimento: cubit.dataNascimento.text,
+                                    endereco: cubit.endereco.text,
+                                    numero: cubit.numero.text,
+                                    bairro: cubit.bairro.text,
+                                    cidade: cubit.cidade.text,
+                                    estado: cubit.estado.text,
+                                    email: cubit.email.text,
+                                    numeroResindencia: cubit.numero.text,
+                                    telefone1: cubit.telefone1.text,
+                                    telefone2: cubit.telefone2.text,
+                                    cep: cubit.cep.text);
 
-                              cubit.addNewClient(
-                                  client, cubit.clients, context);
-                            },
-                            child: const Text('Finalizar'),
-                          ),
-                  );
-                })
+                                cubit.addNewClient(
+                                    client, cubit.clientes, context);
+                              },
+                              child: const Text('Finalizar'),
+                            ),
+                    );
+                  }),
+            )
           ],
         ),
         bottomNavigationBar: AnimatedBuilder(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:teste_firebase/views/pages/signin_or_signup/controller/controller_login.dart';
-import 'package:teste_firebase/views/pages/venda/controller/bloc/controller_cubit.dart';
+import 'package:teste_firebase/views/pages/venda/controller/venda_bloc/controller_cubit.dart';
 
 class MostrarDialog extends StatefulWidget {
   const MostrarDialog({
@@ -22,7 +22,7 @@ class MostrarDialog extends StatefulWidget {
 }
 
 class _MostrarDialogState extends State<MostrarDialog> {
-  VendasRepository vendasRepository = VendasRepository();
+  ControllerLogin vendasRepository = ControllerLogin();
   late final VendaCubit cubit; //começo do get.find()
 
   @override

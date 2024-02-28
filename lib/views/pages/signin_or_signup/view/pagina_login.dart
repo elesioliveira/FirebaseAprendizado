@@ -10,7 +10,13 @@ class LoginPagina extends StatefulWidget {
 }
 
 class _LoginPaginaState extends State<LoginPagina> {
-  late VendasRepository controllerLogin;
+  late ControllerLogin controllerLogin;
+
+  @override
+  void initState() {
+    super.initState();
+    controllerLogin = ControllerLogin();
+  }
 
   @override
   Widget build(BuildContext context) {

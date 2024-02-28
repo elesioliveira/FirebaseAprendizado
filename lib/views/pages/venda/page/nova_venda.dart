@@ -2,11 +2,13 @@ import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teste_firebase/componentes/auto_complete_textfield.dart';
 
 import 'package:teste_firebase/validadores/validadores.dart';
 import 'package:teste_firebase/views/pages/base/view/pagina_base.dart';
-import 'package:teste_firebase/views/pages/venda/controller/bloc/controller_cubit.dart';
-import 'package:teste_firebase/views/pages/venda/controller/bloc/cubit_state.dart';
+import 'package:teste_firebase/views/pages/venda/controller/nova_venda_bloc/controller_add_new.dart';
+import 'package:teste_firebase/views/pages/venda/controller/nova_venda_bloc/cubit_state.dart';
+import 'package:teste_firebase/views/pages/venda/controller/venda_bloc/controller_cubit.dart';
 import 'package:teste_firebase/views/pages/venda/model/model_vendas.dart';
 import '../../../../componentes/textformfield_componente.dart';
 
@@ -20,19 +22,21 @@ class NovaVenda extends StatefulWidget {
 class _NovaVendaState extends State<NovaVenda> {
   TextEditingController numeroVenda = TextEditingController();
   TextEditingController cpf = TextEditingController();
-  TextEditingController cliente = TextEditingController();
+
   TextEditingController vendedor = TextEditingController();
   TextEditingController dataVenda = TextEditingController();
   TextEditingController valor = TextEditingController();
   TextEditingController entregarAte = TextEditingController();
   TextEditingController produto = TextEditingController();
-  late VendaCubit cubit;
+  late AddNewSale controllerNewSale;
+  late VendaCubit controllerSale;
 
   @override
   void initState() {
     super.initState();
-    cubit = BlocProvider.of<VendaCubit>(context);
-    cubit.emitScreen();
+
+    controllerNewSale = BlocProvider.of<AddNewSale>(context);
+    controllerSale = BlocProvider.of<VendaCubit>(context);
   }
 
   @override
@@ -62,14 +66,15 @@ class _NovaVendaState extends State<NovaVenda> {
               )),
             ),
             BlocBuilder(
-                bloc: cubit,
+                bloc: controllerNewSale,
                 builder: (context, state) {
-                  if (state is EstadoInicialVenda) {
+                  if (state is StateInitialAdd) {
                     return Container(
                       padding: const EdgeInsets.only(left: 25, right: 25),
                       child: Form(
                         key: formKey,
                         child: Column(
+                          mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -92,12 +97,7 @@ class _NovaVendaState extends State<NovaVenda> {
                               keyboardType: TextInputType.number,
                               labelText: 'CPF',
                             ),
-                            EntradaDeTexto(
-                              validator: Validadores.nome,
-                              controller: cliente,
-                              keyboardType: TextInputType.text,
-                              labelText: 'Cliente',
-                            ),
+                            AutocompleteBasicExample(),
                             EntradaDeTexto(
                               validator: Validadores.vendedor,
                               controller: vendedor,
@@ -147,7 +147,7 @@ class _NovaVendaState extends State<NovaVenda> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
                                     Navigator.pop(context);
                                   },
                                   child: Container(
@@ -174,7 +174,8 @@ class _NovaVendaState extends State<NovaVenda> {
                                   onTap: () async {
                                     if (formKey.currentState!.validate()) {
                                       final venda = Venda(
-                                          cliente: cliente.text,
+                                          cliente:
+                                              controllerNewSale.cliente.text,
                                           cpf: cpf.text,
                                           dataVenda: dataVenda.text,
                                           entregarAte: entregarAte.text,
@@ -182,18 +183,18 @@ class _NovaVendaState extends State<NovaVenda> {
                                           produto: produto.text,
                                           valor: valor.text,
                                           vendedor: vendedor.text);
-                                      await cubit.addNewSale(
+                                      await controllerNewSale.addNewSale(
                                           context: context,
                                           venda: venda,
-                                          vendas: cubit.vendas);
-                                      cubit.vendas.clear();
+                                          vendas: controllerSale.vendas);
+                                      controllerSale.vendas.clear();
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
                                             builder: (context) =>
                                                 const BaseScreen()),
                                       );
-                                      await cubit.fetchDataSell();
+                                      // await controllerSale.fetchDataSell();
                                     }
                                   },
                                   child: Container(
@@ -218,7 +219,7 @@ class _NovaVendaState extends State<NovaVenda> {
                       ),
                     );
                   }
-                  if (state is CarregandoVenda) {
+                  if (state is LoadingState) {
                     return SizedBox(
                       height: MediaQuery.sizeOf(context).height,
                       child: const Center(
@@ -226,8 +227,11 @@ class _NovaVendaState extends State<NovaVenda> {
                       ),
                     );
                   } else {
-                    return const Center(
-                      child: Text('Algo deu errado'),
+                    return SizedBox(
+                      height: MediaQuery.sizeOf(context).height,
+                      child: const Center(
+                        child: Text('Algo deu errado'),
+                      ),
                     );
                   }
                 })

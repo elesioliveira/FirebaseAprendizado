@@ -1,7 +1,7 @@
 class Validadores {
   static String? nome(String? nome) {
     if (nome == null || nome.isEmpty) {
-      return 'Preencha o seu nome';
+      return 'Preencha um nome';
     }
     if (nome.length < 2) {
       return 'Digite um nome válido';

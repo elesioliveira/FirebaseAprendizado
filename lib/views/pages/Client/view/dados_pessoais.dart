@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teste_firebase/componentes/textformfield_componente.dart';
 import 'package:teste_firebase/validadores/validadores.dart';
 
-import 'package:teste_firebase/views/pages/Client/controller/bloc/client_cubit.dart';
+import 'package:teste_firebase/views/pages/Client/controller/controller/client_cubit.dart';
 
 import 'package:teste_firebase/views/pages/Client/controller/pageview/controller_page_view.dart';
 

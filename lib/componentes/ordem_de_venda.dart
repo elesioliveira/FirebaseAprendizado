@@ -42,8 +42,8 @@ class _OrdemDeVendaState extends State<OrdemDeVenda> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 15),
+    return Card(
+      elevation: 10,
       child: Container(
         decoration: BoxDecoration(
           color: randomColor(),

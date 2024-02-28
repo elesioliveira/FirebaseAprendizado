@@ -14,7 +14,6 @@ class PageviewController with ChangeNotifier {
   int get currentIndex => _value;
 
   void incrementarValor() {
-    print(_value);
     if (_value == 2) return;
 
     _value++;
